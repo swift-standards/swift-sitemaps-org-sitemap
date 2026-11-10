@@ -39,6 +39,17 @@ extension `Sitemap.Alternate Tests` {
         }
 
         @Test
+        func `other extensions follow the alternates`() throws {
+            let nl = try Sitemap.Location("https://example.com/nl/")
+            let note = try Sitemap.Extension(
+                W3C_XML::W3C_XML.Element(name: "x:note", namespaces: [W3C_XML::W3C_XML.Namespace(prefix: "x", uri: "urn:x")])
+            )
+            let url = Sitemap.URL(nl, alternates: [.nl: nl], default: nl, extensions: [note])
+            #expect(url.extensions.count == 3)
+            #expect(url.extensions.last == note)
+        }
+
+        @Test
         func `x-default is read without regard to case`() throws {
             #expect(try Sitemap.Alternate.Language("X-Default") == .default)
         }

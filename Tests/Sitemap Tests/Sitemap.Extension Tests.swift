@@ -104,6 +104,31 @@ extension `Sitemap.Extension Tests` {
         }
 
         @Test
+        func `an extension inside a url comes after its fields`() {
+            let head = #"<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:x="urn:example:x"><url>"#
+            #expect(throws: Sitemap.Parse.Error.missing(W3C_XML::W3C_XML.Name("loc"), in: W3C_XML::W3C_XML.Name("url"))) {
+                _ = try Sitemap.URLSet(parsing: Array((head + "<x:note/><loc>https://example.com/</loc></url></urlset>").utf8))
+            }
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("priority"), in: W3C_XML::W3C_XML.Name("url"))) {
+                _ = try Sitemap.URLSet(
+                    parsing: Array((head + "<loc>https://example.com/</loc><x:note/><priority>1</priority></url></urlset>").utf8)
+                )
+            }
+        }
+
+        @Test
+        func `declarations are kept sorted by prefix`() throws {
+            let element = W3C_XML::W3C_XML.Element(
+                name: "b:note",
+                attributes: [W3C_XML::W3C_XML.Attribute(name: "a:kind", value: "k")],
+                namespaces: [
+                    W3C_XML::W3C_XML.Namespace(prefix: "b", uri: "urn:b"), W3C_XML::W3C_XML.Namespace(prefix: "a", uri: "urn:a"),
+                ]
+            )
+            #expect(try Sitemap.Extension(element).element.namespaces.compactMap(\.prefix) == ["a", "b"])
+        }
+
+        @Test
         func `an element in no namespace inside a url is refused`() {
             #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("note"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try Sitemap.URLSet(

@@ -45,6 +45,19 @@ extension `Sitemap Tests` {
             let set = try Sitemap.URLSet([Sitemap.URL(try location("https://example.com/?a=1&b='2'"))])
             #expect(text(set.bytes).contains("<loc>https://example.com/?a=1&amp;b=&apos;2&apos;</loc>"))
         }
+
+        @Test
+        func `text in an extension uses all five entity escapes`() throws {
+            let note = try Sitemap.Extension(
+                W3C_XML::W3C_XML.Element(
+                    name: "x:note",
+                    content: [.text(#"<a href="b">'c' & d</a>"#)],
+                    namespaces: [W3C_XML::W3C_XML.Namespace(prefix: "x", uri: "urn:x")]
+                )
+            )
+            let set = try Sitemap.URLSet([Sitemap.URL(try location("https://example.com/"), extensions: [note])])
+            #expect(text(set.bytes).contains("<x:note>&lt;a href=&quot;b&quot;&gt;&apos;c&apos; &amp; d&lt;/a&gt;</x:note>"))
+        }
     }
 
     @Suite
@@ -108,7 +121,7 @@ extension `Sitemap Tests` {
             let set = try Sitemap.URLSet(
                 parsing: Array(
                     """
-                    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><!-- c --><url>
+                    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><!-- c --><?pi data?><url>
                       <loc>
                         https://example.com/
                       </loc>
