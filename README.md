@@ -1,16 +1,6 @@
 # swift-sitemaps-org-sitemap
 
-Use this package when you want to write or read a sitemap under the Sitemaps protocol 0.9 published at sitemaps.org. Start from `Sitemap.URLSet` for a list of pages and `Sitemap.Index` for a list of sitemaps. Each holds the protocol's limits as typed refusals and gives its file as `bytes`. Build a page's address as `Sitemap.Location` and its last change as `Sitemap.Datetime`, the W3C Datetime profile of ISO 8601. To list a page's versions in other languages, which is Google's `xhtml:link rel="alternate" hreflang` extension and not part of the protocol, add the `Sitemap Language Alternates` product.
-
-```swift
-import Sitemap_Language_Alternates
-
-let sitemap = try Sitemap.URLSet {
-    Sitemap.URL(address, modified: date, alternates: [.nl: nl, .en: en])
-}
-sitemap.bytes
-let read = try Sitemap.URLSet(parsing: bytes)
-```
+Use this package when you want to write or read a sitemap under the Sitemaps protocol 0.9 published at sitemaps.org. Start from `Sitemap.URLSet` for a list of pages and `Sitemap.Index` for a list of sitemaps, as in `try Sitemap.URLSet { Sitemap.URL(address, modified: date) }.bytes` and `try Sitemap.URLSet(parsing: bytes)`. Each holds the protocol's limits as typed refusals and gives its file as `bytes`. Build a page's address as `Sitemap.Location` and its last change as `Sitemap.Datetime`, the W3C Datetime profile of ISO 8601. To list a page's versions in other languages, which is Google's `xhtml:link rel="alternate" hreflang` extension and not part of the protocol, add the `Sitemap Language Alternates` product and pass `alternates: [.nl: nl, .en: en]`.
 
 ## Laws
 
