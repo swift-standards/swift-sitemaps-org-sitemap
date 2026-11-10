@@ -7,7 +7,7 @@ extension Sitemap {
         var bindings: [String: String]
 
         init() {
-            self.bindings = ["xml": W3C_XML.Namespace.xml.uri]
+            self.bindings = ["xml": W3C_XML::W3C_XML.Namespace.xml.uri]
         }
     }
 }
@@ -16,7 +16,7 @@ extension Sitemap.Scope {
 
     static func key(_ prefix: String?) -> String { prefix ?? "" }
 
-    func entering(_ element: W3C_XML.Element) -> Self {
+    func entering(_ element: W3C_XML::W3C_XML.Element) -> Self {
         var scope = self
         for namespace in element.namespaces {
             scope.bindings[Self.key(namespace.prefix)] = namespace.uri
@@ -24,12 +24,12 @@ extension Sitemap.Scope {
         return scope
     }
 
-    func namespace(of name: W3C_XML.Name) -> String? {
+    func namespace(of name: W3C_XML::W3C_XML.Name) -> String? {
         guard let uri = bindings[Self.key(name.prefix)], !uri.isEmpty else { return nil }
         return uri
     }
 
-    static func free(in element: W3C_XML.Element, declared outer: Set<String> = ["xml"]) -> Set<String> {
+    static func free(in element: W3C_XML::W3C_XML.Element, declared outer: Set<String> = ["xml"]) -> Set<String> {
         var declared = outer
         for namespace in element.namespaces {
             declared.insert(key(namespace.prefix))

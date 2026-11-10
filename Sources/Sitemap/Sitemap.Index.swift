@@ -8,18 +8,10 @@ extension Sitemap {
 
         public let bytes: [UInt8]
 
-        public init(_ entries: [Entry], extensions: [Extension] = []) throws(Limit.Error) {
-            guard Limit.entries.contains(entries.count) else { throw .entries(entries.count) }
-            var writer = Writer()
-            var content = extensions.map { writer.element($0) }
-            for entry in entries {
-                content.append(entry.element(&writer))
-            }
-            let bytes = writer.document("sitemapindex", content)
-            guard bytes.count <= Limit.bytes else { throw .bytes(bytes.count) }
+        public init(_ entries: [Index.Entry], extensions: [Extension] = []) throws(Limit.Error) {
+            self.bytes = try Self.file(entries, extensions: extensions)
             self.entries = entries
             self.extensions = extensions
-            self.bytes = bytes
         }
     }
 }
@@ -30,7 +22,22 @@ extension Sitemap.Index {
         extensions: [Sitemap.Extension] = [],
         @Sitemap.Builder<Sitemap.Index.Entry> _ entries: () -> [Sitemap.Index.Entry]
     ) throws(Sitemap.Limit.Error) {
-        try self.init(entries(), extensions: extensions)
+        let built = entries()
+        self.bytes = try Self.file(built, extensions: extensions)
+        self.entries = built
+        self.extensions = extensions
+    }
+
+    static func file(_ entries: [Sitemap.Index.Entry], extensions: [Sitemap.Extension]) throws(Sitemap.Limit.Error) -> [UInt8] {
+        guard Sitemap.Limit.entries.contains(entries.count) else { throw .entries(entries.count) }
+        var writer = Sitemap.Writer()
+        var content = extensions.map { writer.element($0) }
+        for entry in entries {
+            content.append(entry.element(&writer))
+        }
+        let bytes = writer.document("sitemapindex", content)
+        guard bytes.count <= Sitemap.Limit.bytes else { throw .bytes(bytes.count) }
+        return bytes
     }
 
     public init(parsing bytes: [UInt8]) throws(Sitemap.Parse.Error) {

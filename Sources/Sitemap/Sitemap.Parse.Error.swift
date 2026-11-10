@@ -4,7 +4,7 @@ extension Sitemap.Parse {
 
     public enum Error: Swift::Error, Sendable, Equatable {
 
-        case xml(W3C_XML.Parse.Error)
+        case xml(W3C_XML::W3C_XML.Parse.Error)
 
         case encoding(String)
 
@@ -12,11 +12,11 @@ extension Sitemap.Parse {
 
         case undeclared(String)
 
-        case unexpected(W3C_XML.Name, in: W3C_XML.Name?)
+        case unexpected(W3C_XML::W3C_XML.Name, in: W3C_XML::W3C_XML.Name?)
 
-        case text(in: W3C_XML.Name)
+        case text(in: W3C_XML::W3C_XML.Name)
 
-        case missing(W3C_XML.Name, in: W3C_XML.Name)
+        case missing(W3C_XML::W3C_XML.Name, in: W3C_XML::W3C_XML.Name)
 
         case location(Sitemap.Location.Error)
 

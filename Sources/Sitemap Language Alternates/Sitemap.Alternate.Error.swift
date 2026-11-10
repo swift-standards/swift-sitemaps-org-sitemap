@@ -6,7 +6,7 @@ extension Sitemap.Alternate {
 
     public enum Error: Swift::Error, Sendable, Equatable {
 
-        case link(W3C_XML.Name)
+        case link(W3C_XML::W3C_XML.Name)
 
         case missing(String)
 

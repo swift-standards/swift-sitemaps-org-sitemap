@@ -31,13 +31,11 @@ extension Sitemap.Datetime.Scanner {
     }
 
     mutating func digits(_ count: Int) -> Int? {
-        var value = 0
-        for position in index..<(index + count) {
-            guard let digit = digit(at: position) else { return nil }
-            value = value * 10 + digit
-        }
+        guard index + count <= bytes.count else { return nil }
+        let slice = bytes[index..<(index + count)]
+        guard slice.allSatisfy({ $0 >= UInt8(ascii: "0") && $0 <= UInt8(ascii: "9") }) else { return nil }
         index += count
-        return value
+        return slice.reduce(0) { $0 * 10 + Int($1 - UInt8(ascii: "0")) }
     }
 
     mutating func fraction() -> Int? {

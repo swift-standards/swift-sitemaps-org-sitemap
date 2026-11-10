@@ -12,7 +12,8 @@ extension Sitemap.URL {
         default: Sitemap.Location? = nil,
         extensions: [Sitemap.Extension] = []
     ) {
-        var links = alternates
+        var links =
+            alternates
             .sorted { $0.key.value < $1.key.value }
             .map { Sitemap.Alternate(.tag($0.key), $0.value) }
         if let `default` {

@@ -2,10 +2,10 @@ import Testing
 
 @testable import Sitemap
 
-enum `Sitemap.URLSet Tests` {}
+enum `Sitemap Tests` {}
 
-extension `Sitemap.URLSet Tests` {
-    static func location(_ text: String) throws -> Sitemap.Location {
+extension `Sitemap Tests` {
+    static func location(_ text: String) throws(Sitemap.Location.Error) -> Sitemap.Location {
         try Sitemap.Location(text)
     }
 
@@ -96,7 +96,7 @@ extension `Sitemap.URLSet Tests` {
                     frequency: .daily,
                     priority: try Sitemap.Priority("1")
                 ),
-                Sitemap.URL(try location("https://example.com/b?x=1&y=2"))
+                Sitemap.URL(try location("https://example.com/b?x=1&y=2")),
             ])
             let read = try Sitemap.URLSet(parsing: set.bytes)
             #expect(read == set)
@@ -134,7 +134,7 @@ extension `Sitemap.URLSet Tests` {
 
         @Test
         func `a urlset outside the sitemaps namespace is refused`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("urlset"), in: nil)) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("urlset"), in: nil)) {
                 _ = try Sitemap.URLSet(parsing: Array("<urlset><url><loc>https://example.com/</loc></url></urlset>".utf8))
             }
         }
@@ -162,38 +162,38 @@ extension `Sitemap.URLSet Tests` {
 
         @Test
         func `fields out of protocol order are refused`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("lastmod"), in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("lastmod"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("<loc>https://example.com/</loc><priority>0.5</priority><lastmod>2026</lastmod>")
             }
         }
 
         @Test
         func `a field given twice is refused`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("loc"), in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("loc"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("<loc>https://example.com/</loc><loc>https://example.com/</loc>")
             }
         }
 
         @Test
         func `a url without loc first is refused`() {
-            #expect(throws: Sitemap.Parse.Error.missing(W3C_XML.Name("loc"), in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.missing(W3C_XML::W3C_XML.Name("loc"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("<lastmod>2026</lastmod><loc>https://example.com/</loc>")
             }
-            #expect(throws: Sitemap.Parse.Error.missing(W3C_XML.Name("loc"), in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.missing(W3C_XML::W3C_XML.Name("loc"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("")
             }
         }
 
         @Test
         func `an unknown element of the sitemaps namespace is refused`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("title"), in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("title"), in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("<loc>https://example.com/</loc><title>x</title>")
             }
         }
 
         @Test
         func `text between elements is refused`() {
-            #expect(throws: Sitemap.Parse.Error.text(in: W3C_XML.Name("url"))) {
+            #expect(throws: Sitemap.Parse.Error.text(in: W3C_XML::W3C_XML.Name("url"))) {
                 _ = try parse("<loc>https://example.com/</loc>stray")
             }
         }
@@ -207,7 +207,7 @@ extension `Sitemap.URLSet Tests` {
 
         @Test
         func `a value holding an element is refused`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("b"), in: W3C_XML.Name("loc"))) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("b"), in: W3C_XML::W3C_XML.Name("loc"))) {
                 _ = try parse("<loc>https://example.com/<b/></loc>")
             }
         }

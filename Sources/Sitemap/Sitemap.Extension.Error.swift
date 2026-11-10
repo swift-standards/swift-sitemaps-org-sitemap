@@ -6,8 +6,8 @@ extension Sitemap.Extension {
 
         case undeclared(String?)
 
-        case unqualified(W3C_XML.Name)
+        case unqualified(W3C_XML::W3C_XML.Name)
 
-        case sitemap(W3C_XML.Name)
+        case sitemap(W3C_XML::W3C_XML.Name)
     }
 }

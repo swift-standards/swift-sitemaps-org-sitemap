@@ -45,37 +45,37 @@ extension `Sitemap.Alternate Tests` {
 
         @Test
         func `other extensions are not alternates`() throws {
-            let note = try Sitemap.Extension(W3C_XML.Element(name: "x:note", namespaces: [W3C_XML.Namespace(prefix: "x", uri: "urn:x")]))
+            let note = try Sitemap.Extension(W3C_XML::W3C_XML.Element(name: "x:note", namespaces: [W3C_XML::W3C_XML.Namespace(prefix: "x", uri: "urn:x")]))
             let url = Sitemap.URL(try Sitemap.Location("https://example.com/"), extensions: [note])
             #expect(try url.alternates.isEmpty)
-            #expect(throws: Sitemap.Alternate.Error.link(W3C_XML.Name("x:note"))) {
+            #expect(throws: Sitemap.Alternate.Error.link(W3C_XML::W3C_XML.Name("x:note"))) {
                 _ = try Sitemap.Alternate(note)
             }
         }
 
         @Test
         func `a link with a malformed hreflang or href is refused`() throws {
-            func link(_ attributes: [W3C_XML.Attribute]) throws -> Sitemap.URL {
-                let element = W3C_XML.Element(
+            func link(_ attributes: [W3C_XML::W3C_XML.Attribute]) throws -> Sitemap.URL {
+                let element = W3C_XML::W3C_XML.Element(
                     name: "xhtml:link",
-                    attributes: [W3C_XML.Attribute(name: "rel", value: "alternate")] + attributes,
+                    attributes: [W3C_XML::W3C_XML.Attribute(name: "rel", value: "alternate")] + attributes,
                     namespaces: [Sitemap.Alternate.namespace]
                 )
                 return Sitemap.URL(try Sitemap.Location("https://example.com/"), extensions: [try Sitemap.Extension(element)])
             }
             #expect(throws: Sitemap.Alternate.Error.missing("hreflang")) {
-                _ = try link([W3C_XML.Attribute(name: "href", value: "https://example.com/")]).alternates
+                _ = try link([W3C_XML::W3C_XML.Attribute(name: "href", value: "https://example.com/")]).alternates
             }
             #expect(throws: Sitemap.Alternate.Error.language(.invalidSubtagOrder("en-USA"))) {
                 _ = try link([
-                    W3C_XML.Attribute(name: "hreflang", value: "en-USA"),
-                    W3C_XML.Attribute(name: "href", value: "https://example.com/"),
+                    W3C_XML::W3C_XML.Attribute(name: "hreflang", value: "en-USA"),
+                    W3C_XML::W3C_XML.Attribute(name: "href", value: "https://example.com/"),
                 ]).alternates
             }
             #expect(throws: Sitemap.Alternate.Error.location(.relative(try RFC_3986.URI("/en/")))) {
                 _ = try link([
-                    W3C_XML.Attribute(name: "hreflang", value: "en"),
-                    W3C_XML.Attribute(name: "href", value: "/en/"),
+                    W3C_XML::W3C_XML.Attribute(name: "hreflang", value: "en"),
+                    W3C_XML::W3C_XML.Attribute(name: "href", value: "/en/"),
                 ]).alternates
             }
         }

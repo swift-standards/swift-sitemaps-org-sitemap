@@ -11,7 +11,7 @@ extension `Sitemap.Index Tests` {
         func `an index is written as a sitemapindex of sitemap entries`() throws {
             let index = try Sitemap.Index([
                 Sitemap.Index.Entry(try Sitemap.Location("https://example.com/sitemap-1.xml"), modified: try Sitemap.Datetime("2026-11")),
-                Sitemap.Index.Entry(try Sitemap.Location("https://example.com/sitemap-2.xml"))
+                Sitemap.Index.Entry(try Sitemap.Location("https://example.com/sitemap-2.xml")),
             ])
             #expect(
                 String(decoding: index.bytes, as: UTF8.self) == """
@@ -34,7 +34,7 @@ extension `Sitemap.Index Tests` {
 
         @Test
         func `an entry takes only loc and lastmod`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("priority"), in: W3C_XML.Name("sitemap"))) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("priority"), in: W3C_XML::W3C_XML.Name("sitemap"))) {
                 _ = try Sitemap.Index(
                     parsing: Array(
                         #"<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://example.com/s.xml</loc><priority>1</priority></sitemap></sitemapindex>"#
@@ -46,7 +46,7 @@ extension `Sitemap.Index Tests` {
 
         @Test
         func `a urlset is not an index`() {
-            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML.Name("urlset"), in: nil)) {
+            #expect(throws: Sitemap.Parse.Error.unexpected(W3C_XML::W3C_XML.Name("urlset"), in: nil)) {
                 _ = try Sitemap.Index(
                     parsing: Array(#"<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>"#.utf8)
                 )

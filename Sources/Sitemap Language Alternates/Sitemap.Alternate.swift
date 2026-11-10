@@ -18,7 +18,7 @@ extension Sitemap {
 
 extension Sitemap.Alternate {
 
-    public static let namespace = W3C_XML.Namespace(prefix: "xhtml", uri: "http://www.w3.org/1999/xhtml")
+    public static let namespace = W3C_XML::W3C_XML.Namespace(prefix: "xhtml", uri: "http://www.w3.org/1999/xhtml")
 
     static func isAlternate(_ extension: Sitemap.Extension) -> Bool {
         `extension`.namespace.uri == namespace.uri

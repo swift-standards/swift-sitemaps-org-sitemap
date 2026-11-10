@@ -32,7 +32,7 @@ extension Sitemap {
 
 extension Sitemap.URL {
 
-    func element(_ writer: inout Sitemap.Writer) -> W3C_XML.Element {
+    func element(_ writer: inout Sitemap.Writer) -> W3C_XML::W3C_XML.Element {
         var children = [Sitemap.Writer.element("loc", location.uri.value)]
         if let modified {
             children.append(Sitemap.Writer.element("lastmod", modified.description))
@@ -46,6 +46,6 @@ extension Sitemap.URL {
         for item in extensions {
             children.append(writer.element(item))
         }
-        return W3C_XML.Element(name: W3C_XML.Name(local: "url"), content: children.map { .element($0) })
+        return W3C_XML::W3C_XML.Element(name: W3C_XML::W3C_XML.Name(local: "url"), content: children.map { .element($0) })
     }
 }

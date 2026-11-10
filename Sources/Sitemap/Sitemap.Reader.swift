@@ -7,23 +7,11 @@ extension Sitemap {
 
 extension Sitemap.Reader {
 
-    struct Child {
-
-        let element: W3C_XML.Element
-
-        let scope: Sitemap.Scope
-
-        let isSitemap: Bool
-    }
-}
-
-extension Sitemap.Reader {
-
-    static func document(_ bytes: [UInt8], root local: String) throws(Sitemap.Parse.Error) -> (W3C_XML.Element, Sitemap.Scope) {
+    static func document(_ bytes: [UInt8], root local: String) throws(Sitemap.Parse.Error) -> (W3C_XML::W3C_XML.Element, Sitemap.Scope) {
         guard bytes.count <= Sitemap.Limit.bytes else { throw .limit(.bytes(bytes.count)) }
-        let document: W3C_XML.Document
-        do throws(W3C_XML.Parse.Error) {
-            document = try W3C_XML.parse(bytes)
+        let document: W3C_XML::W3C_XML.Document
+        do throws(W3C_XML::W3C_XML.Parse.Error) {
+            document = try W3C_XML::W3C_XML.parse(bytes)
         } catch {
             throw .xml(error)
         }
@@ -39,14 +27,14 @@ extension Sitemap.Reader {
         return (document.root, scope)
     }
 
-    static func namespace(of name: W3C_XML.Name, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> String? {
+    static func namespace(of name: W3C_XML::W3C_XML.Name, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> String? {
         if let prefix = name.prefix, scope.bindings[prefix] == nil {
             throw .undeclared(prefix)
         }
         return scope.namespace(of: name)
     }
 
-    static func children(of element: W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> [Child] {
+    static func children(of element: W3C_XML::W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> [Child] {
         var children: [Child] = []
         for item in element.content {
             switch item {
@@ -71,7 +59,7 @@ extension Sitemap.Reader {
         byte == 0x20 || byte == 0x09 || byte == 0x0A || byte == 0x0D
     }
 
-    static func value(_ element: W3C_XML.Element) throws(Sitemap.Parse.Error) -> String {
+    static func value(_ element: W3C_XML::W3C_XML.Element) throws(Sitemap.Parse.Error) -> String {
         if let child = element.children.first {
             throw .unexpected(child.name, in: element.name)
         }
@@ -81,11 +69,11 @@ extension Sitemap.Reader {
         return String(decoding: bytes[start..<max(start, end)], as: UTF8.self)
     }
 
-    static func `extension`(_ element: W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.Extension {
+    static func `extension`(_ element: W3C_XML::W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.Extension {
         var element = element
         for prefix in Sitemap.Scope.free(in: element).sorted() {
             guard let uri = scope.bindings[prefix] else { continue }
-            element.namespaces.append(W3C_XML.Namespace(prefix: prefix.isEmpty ? nil : prefix, uri: uri))
+            element.namespaces.append(W3C_XML::W3C_XML.Namespace(prefix: prefix.isEmpty ? nil : prefix, uri: uri))
         }
         do throws(Sitemap.Extension.Error) {
             return try Sitemap.Extension(element)
@@ -97,7 +85,7 @@ extension Sitemap.Reader {
 
 extension Sitemap.Reader {
 
-    static func url(_ element: W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.URL {
+    static func url(_ element: W3C_XML::W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.URL {
         let fields = try self.fields(of: element, in: scope, order: ["loc", "lastmod", "changefreq", "priority"])
         var url = Sitemap.URL(try location(fields.values["loc"], in: element.name), extensions: fields.extensions)
         if let text = fields.values["lastmod"] {
@@ -117,7 +105,7 @@ extension Sitemap.Reader {
         return url
     }
 
-    static func entry(_ element: W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.Index.Entry {
+    static func entry(_ element: W3C_XML::W3C_XML.Element, in scope: Sitemap.Scope) throws(Sitemap.Parse.Error) -> Sitemap.Index.Entry {
         let fields = try self.fields(of: element, in: scope, order: ["loc", "lastmod"])
         var entry = Sitemap.Index.Entry(try location(fields.values["loc"], in: element.name), extensions: fields.extensions)
         if let text = fields.values["lastmod"] {
@@ -127,7 +115,7 @@ extension Sitemap.Reader {
     }
 
     static func fields(
-        of element: W3C_XML.Element,
+        of element: W3C_XML::W3C_XML.Element,
         in scope: Sitemap.Scope,
         order: [String]
     ) throws(Sitemap.Parse.Error) -> (values: [String: String], extensions: [Sitemap.Extension]) {
@@ -136,7 +124,7 @@ extension Sitemap.Reader {
         var stage = -1
         for child in try children(of: element, in: scope) {
             guard child.isSitemap else {
-                guard stage >= 0 else { throw .missing(W3C_XML.Name(local: "loc"), in: element.name) }
+                guard stage >= 0 else { throw .missing(W3C_XML::W3C_XML.Name(local: "loc"), in: element.name) }
                 stage = order.count
                 extensions.append(try self.extension(child.element, in: child.scope))
                 continue
@@ -144,15 +132,15 @@ extension Sitemap.Reader {
             guard let position = order.firstIndex(of: child.element.name.local), position > stage else {
                 throw .unexpected(child.element.name, in: element.name)
             }
-            guard stage >= 0 || position == 0 else { throw .missing(W3C_XML.Name(local: "loc"), in: element.name) }
+            guard stage >= 0 || position == 0 else { throw .missing(W3C_XML::W3C_XML.Name(local: "loc"), in: element.name) }
             stage = position
             values[child.element.name.local] = try value(child.element)
         }
         return (values, extensions)
     }
 
-    static func location(_ text: String?, in parent: W3C_XML.Name) throws(Sitemap.Parse.Error) -> Sitemap.Location {
-        guard let text else { throw .missing(W3C_XML.Name(local: "loc"), in: parent) }
+    static func location(_ text: String?, in parent: W3C_XML::W3C_XML.Name) throws(Sitemap.Parse.Error) -> Sitemap.Location {
+        guard let text else { throw .missing(W3C_XML::W3C_XML.Name(local: "loc"), in: parent) }
         do throws(Sitemap.Location.Error) {
             return try Sitemap.Location(text)
         } catch {
