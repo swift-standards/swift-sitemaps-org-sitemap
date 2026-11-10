@@ -1,0 +1,11 @@
+# .github/metadata.yaml
+description: "Swift implementation of the Sitemaps protocol 0.9 (sitemaps.org): urlset and sitemapindex, parsed and serialized within the protocol's limits."
+topics:
+  - standards
+  - sitemaps
+  - sitemap
+  - seo
+  - xml
+homepage: "https://swift-institute.org"
+readme:
+  family: E

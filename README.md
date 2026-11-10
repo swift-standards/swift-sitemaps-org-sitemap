@@ -1,0 +1,32 @@
+# swift-sitemaps-org-sitemap
+
+Use this package when you want to write or read a sitemap under the Sitemaps protocol 0.9 published at sitemaps.org. Start from `Sitemap.URLSet` for a list of pages and `Sitemap.Index` for a list of sitemaps. Each holds the protocol's limits as typed refusals and gives its file as `bytes`. Build a page's address as `Sitemap.Location` and its last change as `Sitemap.Datetime`, the W3C Datetime profile of ISO 8601. To list a page's versions in other languages, which is Google's `xhtml:link rel="alternate" hreflang` extension and not part of the protocol, add the `Sitemap Language Alternates` product.
+
+```swift
+import Sitemap_Language_Alternates
+
+let sitemap = try Sitemap.URLSet {
+    Sitemap.URL(address, modified: date, alternates: [.nl: nl, .en: en])
+}
+sitemap.bytes
+let read = try Sitemap.URLSet(parsing: bytes)
+```
+
+## Laws
+
+- A file is UTF-8 with the declaration `<?xml version="1.0" encoding="UTF-8"?>`. Its root is `urlset` or `sitemapindex`, with the sitemaps namespace `http://www.sitemaps.org/schemas/sitemap/0.9` declared as the default namespace. Nothing is indented.
+- A `url` is written as `loc`, `lastmod`, `changefreq` and `priority`, in that order and each at most once, followed by its extensions. A field that is nil is not written. A `sitemap` entry of an index is written the same way with `loc` and `lastmod` only.
+- Values are written with all five entity escapes: `&amp;`, `&apos;`, `&quot;`, `&gt;` and `&lt;`.
+- A set or an index holds 1 to 50,000 entries. An empty one, or one with more, is refused with `Sitemap.Limit.Error.entries`.
+- A set or an index whose file would be over 52,428,800 bytes is refused with `Sitemap.Limit.Error.bytes`. Input over that size is refused before it is read.
+- A `Sitemap.Location` is a URI with a scheme. After entity escaping it is at least 12 and fewer than 2,048 characters long, so an `&` counts as five. A relative reference, a URI of the wrong length and text that is not an RFC 3986 URI are refused.
+- A `Sitemap.Datetime` is read in one of the six granularities of W3C Datetime: `YYYY`, `YYYY-MM`, `YYYY-MM-DD`, and a date with `Thh:mm`, `Thh:mm:ss` or `Thh:mm:ss.s` and a zone designator, `Z` or `±hh:mm`. Any other form is refused, including basic format, lowercase `t` or `z`, a comma before the fraction and a time with no zone. A date or time ISO 8601 rejects, such as 30 February or hour 24, is refused with the ISO 8601 error.
+- A date is written as it was read. A time is written with seconds in its own offset, `Z` when the offset is zero, and its fraction is written without trailing zeros and left out when zero. A time read without seconds has second zero.
+- A `Sitemap.Priority` is an XML Schema decimal from 0.0 to 1.0 with at most 18 fraction digits. It is written without leading or trailing zeros but always with one digit on each side of the point, so `1` is written `1.0` and `0.50` is written `0.5`. A `Double` is taken at its shortest decimal form. Priorities are compared by value.
+- `changefreq` is one of `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly` and `never`, written in lowercase. Any other text is refused when read.
+- Reading follows the protocol's schema. Elements are matched by namespace, not by prefix, so a prefixed sitemaps namespace reads too. A root in another namespace or with another name is refused, and so is an XML declaration naming an encoding other than UTF-8. Fields out of order, a field given twice, an unknown element of the sitemaps namespace, an entry without `loc` first, text other than whitespace between elements and an element inside a value are all refused. Values are trimmed of XML whitespace. Comments and processing instructions are ignored.
+- An element of any other namespace is a `Sitemap.Extension`. It may follow an entry's fields, or come before the first entry of a set or an index. Anywhere else it is refused. An element in no namespace and a prefix with no declaration are refused.
+- An extension carries the declarations of every prefix it uses, so it can stand alone. Read extensions are given the declarations they rely on from the document, and declarations are kept sorted by prefix. When written, an extension's prefixed declarations move to the root unless the root binds that prefix to another namespace, in which case the extension keeps its own.
+- Reading a written set or index gives an equal value, and writing it again gives the same bytes.
+- With `Sitemap Language Alternates`, `Sitemap.URL(_:modified:frequency:priority:alternates:default:extensions:)` writes one `xhtml:link rel="alternate"` per language, sorted by language tag. The `default:` location follows them as `hreflang="x-default"`, and any other extensions come after that. The XHTML namespace is declared once, on the root.
+- `Sitemap.URL.alternates` reads back every `xhtml:link` whose `rel` is `alternate`, in order, and skips other extensions. `x-default` is read without regard to case. Any other `hreflang` must be a BCP 47 language tag and `href` must be a valid `Sitemap.Location`. Otherwise the link is refused.
