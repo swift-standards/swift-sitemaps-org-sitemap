@@ -83,7 +83,7 @@ extension `Sitemap.Alternate Tests` {
                     W3C.XML.Attribute(name: "href", value: "https://example.com/"),
                 ]).alternates
             }
-            #expect(throws: Sitemap.Alternate.Error.location(.relative(try RFC_3986.URI("/en/")))) {
+            #expect(throws: Sitemap.Alternate.Error.location(.relative(try IETF.RFC.`3986`.URI("/en/")))) {
                 _ = try link([
                     W3C.XML.Attribute(name: "hreflang", value: "en"),
                     W3C.XML.Attribute(name: "href", value: "/en/"),

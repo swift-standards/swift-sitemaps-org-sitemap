@@ -9,7 +9,7 @@ extension `Sitemap.Location Tests` {
     struct `Location limits` {
         @Test
         func `a relative reference is refused`() throws {
-            let uri = try RFC_3986.URI("/about")
+            let uri = try IETF.RFC.`3986`.URI("/about")
             #expect(throws: Sitemap.Location.Error.relative(uri)) {
                 _ = try Sitemap.Location(uri)
             }

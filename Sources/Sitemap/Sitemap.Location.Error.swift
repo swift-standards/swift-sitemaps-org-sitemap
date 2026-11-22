@@ -4,9 +4,9 @@ extension Sitemap.Location {
 
     public enum Error: Swift::Error, Sendable, Hashable {
 
-        case uri(RFC_3986.Error)
+        case uri(IETF.RFC.`3986`.Error)
 
-        case relative(RFC_3986.URI)
+        case relative(IETF.RFC.`3986`.URI)
 
         case length(Int)
     }
