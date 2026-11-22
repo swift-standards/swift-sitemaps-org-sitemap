@@ -49,9 +49,9 @@ extension `Sitemap.Datetime Tests` {
 
         @Test
         func `a date and a date-time from ISO 8601 are taken as they are`() throws {
-            let date = try ISO_8601.CalendarDate(year: 2026, month: 11, day: 10)
+            let date = try ISO.`8601`.CalendarDate(year: 2026, month: 11, day: 10)
             #expect(Sitemap.Datetime(date).description == "2026-11-10")
-            let time = try ISO_8601.DateTime(year: 2026, month: 11, day: 10, hour: 8, minute: 5)
+            let time = try ISO.`8601`.DateTime(year: 2026, month: 11, day: 10, hour: 8, minute: 5)
             #expect(Sitemap.Datetime(time).description == "2026-11-10T08:05:00Z")
         }
     }

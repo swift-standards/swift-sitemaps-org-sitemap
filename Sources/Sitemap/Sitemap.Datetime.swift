@@ -4,19 +4,19 @@ extension Sitemap {
 
     public enum Datetime: Sendable, Hashable {
 
-        case date(ISO_8601.CalendarDate.Reduced)
+        case date(ISO.`8601`.CalendarDate.Reduced)
 
-        case time(ISO_8601.DateTime)
+        case time(ISO.`8601`.DateTime)
     }
 }
 
 extension Sitemap.Datetime {
 
-    public init(_ date: ISO_8601.CalendarDate) {
-        self = .date(ISO_8601.CalendarDate.Reduced(date))
+    public init(_ date: ISO.`8601`.CalendarDate) {
+        self = .date(ISO.`8601`.CalendarDate.Reduced(date))
     }
 
-    public init(_ time: ISO_8601.DateTime) {
+    public init(_ time: ISO.`8601`.DateTime) {
         self = .time(time)
     }
 }

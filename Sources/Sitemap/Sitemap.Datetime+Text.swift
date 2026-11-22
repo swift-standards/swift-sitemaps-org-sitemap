@@ -37,15 +37,15 @@ extension Sitemap.Datetime {
             }
         }
         guard let offsetSeconds = scanner.designator(), scanner.isAtEnd else { throw form }
-        let offset: ISO_8601.Timezone.Offset
-        do throws(ISO_8601.Timezone.Offset.Error) {
-            offset = try ISO_8601.Timezone.Offset(seconds: offsetSeconds)
+        let offset: ISO.`8601`.Timezone.Offset
+        do throws(ISO.`8601`.Timezone.Offset.Error) {
+            offset = try ISO.`8601`.Timezone.Offset(seconds: offsetSeconds)
         } catch {
             throw .offset(error)
         }
-        do throws(ISO_8601.DateTime.Error) {
+        do throws(ISO.`8601`.DateTime.Error) {
             self = .time(
-                try ISO_8601.DateTime(
+                try ISO.`8601`.DateTime(
                     year: year,
                     month: month,
                     day: day,
@@ -65,9 +65,9 @@ extension Sitemap.Datetime {
         year: Int,
         month: Int? = nil,
         day: Int? = nil
-    ) throws(Error) -> ISO_8601.CalendarDate.Reduced {
-        do throws(ISO_8601.CalendarDate.Error) {
-            return try ISO_8601.CalendarDate.Reduced(year: year, month: month, day: day)
+    ) throws(Error) -> ISO.`8601`.CalendarDate.Reduced {
+        do throws(ISO.`8601`.CalendarDate.Error) {
+            return try ISO.`8601`.CalendarDate.Reduced(year: year, month: month, day: day)
         } catch {
             throw .date(error)
         }

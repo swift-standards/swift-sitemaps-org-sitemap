@@ -6,10 +6,10 @@ extension Sitemap.Datetime {
 
         case form(String)
 
-        case date(ISO_8601.CalendarDate.Error)
+        case date(ISO.`8601`.CalendarDate.Error)
 
-        case time(ISO_8601.DateTime.Error)
+        case time(ISO.`8601`.DateTime.Error)
 
-        case offset(ISO_8601.Timezone.Offset.Error)
+        case offset(ISO.`8601`.Timezone.Offset.Error)
     }
 }
