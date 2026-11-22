@@ -4,7 +4,7 @@ extension Sitemap.Reader {
 
     struct Child {
 
-        let element: W3C_XML::W3C_XML.Element
+        let element: W3C.XML.Element
 
         let scope: Sitemap.Scope
 
