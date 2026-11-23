@@ -5,7 +5,7 @@ extension Sitemap.Alternate {
 
     public enum Language: Sendable, Hashable {
 
-        case tag(BCP47.LanguageTag)
+        case tag(BCP47.Tag)
 
         case `default`
     }
@@ -18,7 +18,7 @@ extension Sitemap.Alternate.Language {
             self = .default
             return
         }
-        self = .tag(try BCP47.LanguageTag(text))
+        self = .tag(try BCP47.Tag(text))
     }
 }
 

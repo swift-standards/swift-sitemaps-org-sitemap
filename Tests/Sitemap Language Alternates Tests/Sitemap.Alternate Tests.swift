@@ -25,7 +25,7 @@ extension `Sitemap.Alternate Tests` {
         func `alternates read back from the written set`() throws {
             let nl = try Sitemap.Location("https://example.com/nl/")
             let en = try Sitemap.Location("https://example.com/en-GB/")
-            let tag = try BCP47.LanguageTag("en-GB")
+            let tag = try BCP47.Tag("en-GB")
             let set = try Sitemap.URLSet { Sitemap.URL(nl, alternates: [.nl: nl, tag: en], default: en) }
             let read = try Sitemap.URLSet(parsing: set.bytes)
             #expect(read == set)

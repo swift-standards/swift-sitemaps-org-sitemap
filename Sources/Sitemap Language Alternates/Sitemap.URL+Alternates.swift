@@ -8,7 +8,7 @@ extension Sitemap.URL {
         modified: Sitemap.Datetime? = nil,
         frequency: Sitemap.Frequency? = nil,
         priority: Sitemap.Priority? = nil,
-        alternates: [BCP47.LanguageTag: Sitemap.Location],
+        alternates: [BCP47.Tag: Sitemap.Location],
         default: Sitemap.Location? = nil,
         extensions: [Sitemap.Extension] = []
     ) {
